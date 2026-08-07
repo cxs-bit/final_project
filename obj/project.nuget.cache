@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "3p+NX5MK5J2EH8tkqR5zZ4y+ZVhZpyx1Cr42z4tWfSOslFbUv+yTxgl5SOAhv+qqM3pzjl5ODKBq0b1Msl6Dhw==",
+  "success": true,
+  "projectFilePath": "/home/carl/Documents/repos/fundamentos de programacion/final_project/final_project.csproj",
+  "expectedPackageFiles": [
+    "/home/carl/.nuget/packages/spectre.console/0.57.2/spectre.console.0.57.2.nupkg.sha512",
+    "/home/carl/.nuget/packages/spectre.console.ansi/0.57.2/spectre.console.ansi.0.57.2.nupkg.sha512",
+    "/home/carl/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.25/microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512"
+  ],
+  "logs": []
+}
