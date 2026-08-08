@@ -16,3 +16,4 @@
 /home/carl/Documents/repos/fundamentos de programacion/final_project/obj/Debug/net8.0/final_project.pdb
 /home/carl/Documents/repos/fundamentos de programacion/final_project/obj/Debug/net8.0/final_project.genruntimeconfig.cache
 /home/carl/Documents/repos/fundamentos de programacion/final_project/obj/Debug/net8.0/ref/final_project.dll
+/home/carl/Documents/repos/fundamentos de programacion/final_project/obj/Debug/net8.0/final_project.sourcelink.json
