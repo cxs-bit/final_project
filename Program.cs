@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic;
 class Program
 {
     static readonly int[,] A = {
@@ -31,8 +32,22 @@ class Program
         int option = 0;
         while (option != 4)
         {
+            // Header 
             AnsiConsole.Clear();
-            AnsiConsole.MarkupLine($"[bold Gold3_1]Welcome[/] to [blue]My Final Project[/] {username}!");
+            var font = FigletFont.Load("./bin/ANSI Shadow.flf");
+            var header = new FigletText(font, $"Welcome")
+            {
+                Color = Color.Gold1,
+                Justification = Justify.Center
+            };
+            var caption = new Markup($"to [Gold3_1]My Final Project[/] {username}!", new Style(Color.Grey))
+            {
+                Justification = Justify.Center
+            };
+            AnsiConsole.Write(header);
+            AnsiConsole.Write(caption);
+
+            // Menu
             var table = new Table()
             .SimpleHeavyBorder()
             .Expand()
@@ -45,17 +60,30 @@ class Program
             AnsiConsole.Write(table);
             option = AnsiConsole.Ask<int>("Select an [bold blue]option[/]:");
 
+            string msg = string.Empty;
+            string cryptogram = string.Empty;
+
             switch (option)
             {
                 case 1:
-                    ShowCryptogram(await EncryptAsync(ReadMessage("message")));
+                    msg = await EncryptAsync(ReadMessage("message"));
+                    ShowMessage(msg, "message");
+                    HandleResultOptions(msg);
                     break;
 
                 case 2:
-                    ShowMessage(await DecryptAsync(ReadMessage("cryptogram")));
+                    cryptogram = await DecryptAsync(ReadMessage("cryptogram"));
+                    ShowMessage(cryptogram, "cryptogram");
+                    HandleResultOptions(cryptogram);
                     break;
 
                 case 3:
+                    msg = ReadMessage("message");
+                    cryptogram = await EncryptAsync(msg);
+                    string recovered = await DecryptAsync(cryptogram);
+                    ShowMessage(cryptogram, "cryptogram");
+                    ShowMessage(recovered, "message");
+                    HandleResultOptions(cryptogram);
                     break;
 
                 case 4:
@@ -80,21 +108,27 @@ class Program
                 return cryptogram;
 
             default:
-                AnsiConsole.MarkupLine("[bold red]ERROR:[/][red]The type specified doenst exist[/]");
+                AnsiConsole.MarkupLine("[bold red]ERROR:[/][red]The type specified doesn't exist[/]");
                 return "ERROR";
 
         }
     }
-    private static void ShowCryptogram(string msg)
+    private static void ShowMessage(string msg, string type)
     {
-        AnsiConsole.MarkupLine($"[green]Done[/], the encrypted message is: [/][bold teal]{msg}[/]");
-        HandleResultOptions(msg);
-    }
+        switch (type)
+        {
+            case "message":
+                AnsiConsole.MarkupLine($"\n[green]Done![/] \nEncrypted message is: [bold teal]{msg}[/]");
+                break;
 
-    private static void ShowMessage(string msg)
-    {
-        AnsiConsole.MarkupLine($"[green]Done![/], the original message is: [bold teal]{msg}[/]");
-        HandleResultOptions(msg);
+            case "cryptogram":
+                AnsiConsole.MarkupLine($"\n[green]Done![/] \nOriginal message is: [bold teal]{msg}[/]");
+                break;
+
+            default:
+                AnsiConsole.MarkupLine("[bold red]ERROR:[/][red]The type specified doesn't exist[/]");
+                break;
+        }
     }
 
     private static void HandleResultOptions(string msg)
@@ -102,7 +136,7 @@ class Program
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select an option:")
-                .AddChoices(new[] { "Copy to clipboard", "Continue", "Exit" })
+                .AddChoices(new[] { "Continue", "Copy to clipboard", "Exit" })
         );
 
         switch (choice)
@@ -140,11 +174,17 @@ class Program
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
-                using (var p = Process.Start(psi))
+                var pWin = Process.Start(psi);
+                if (pWin == null) return false;
+                using (pWin)
                 {
-                    p.StandardInput.Write(text);
-                    p.StandardInput.Close();
-                    p.WaitForExit();
+                    var stdin = pWin.StandardInput;
+                    if (stdin != null)
+                    {
+                        stdin.Write(text);
+                        stdin.Close();
+                    }
+                    pWin.WaitForExit();
                 }
                 return true;
             }
@@ -157,11 +197,17 @@ class Program
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
-                using (var p = Process.Start(psi))
+                var pOsx = Process.Start(psi);
+                if (pOsx == null) return false;
+                using (pOsx)
                 {
-                    p.StandardInput.Write(text);
-                    p.StandardInput.Close();
-                    p.WaitForExit();
+                    var stdin = pOsx.StandardInput;
+                    if (stdin != null)
+                    {
+                        stdin.Write(text);
+                        stdin.Close();
+                    }
+                    pOsx.WaitForExit();
                 }
                 return true;
             }
@@ -175,11 +221,17 @@ class Program
             };
             try
             {
-                using (var p = Process.Start(psiWl))
+                var pWl = Process.Start(psiWl);
+                if (pWl == null) return false;
+                using (pWl)
                 {
-                    p.StandardInput.Write(text);
-                    p.StandardInput.Close();
-                    p.WaitForExit();
+                    var stdin = pWl.StandardInput;
+                    if (stdin != null)
+                    {
+                        stdin.Write(text);
+                        stdin.Close();
+                    }
+                    pWl.WaitForExit();
                 }
                 return true;
             }
@@ -194,11 +246,17 @@ class Program
             };
             try
             {
-                using (var p = Process.Start(psiXclip))
+                var pX = Process.Start(psiXclip);
+                if (pX == null) return false;
+                using (pX)
                 {
-                    p.StandardInput.Write(text);
-                    p.StandardInput.Close();
-                    p.WaitForExit();
+                    var stdin = pX.StandardInput;
+                    if (stdin != null)
+                    {
+                        stdin.Write(text);
+                        stdin.Close();
+                    }
+                    pX.WaitForExit();
                 }
                 return true;
             }
@@ -222,7 +280,7 @@ class Program
             await Task.Delay(1000);
             ctx.Spinner(Spinner.Known.Arc);
             ctx.SpinnerStyle(Style.Parse("White"));
-            ctx.Status("[White]Spliting up the cryptogram...[/]");
+            ctx.Status("[White]Splitting up the cryptogram...[/]");
 
             var tokens = cryptogram.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
             var numbers = new List<int>();
@@ -247,7 +305,7 @@ class Program
             {
                 await Task.Delay(1000);
                 ctx.SpinnerStyle(Style.Parse("Cyan"));
-                ctx.Status("[Cyan]Starting decrypting the cryptogram...[/]");
+                ctx.Status("[Cyan]Starting decryption...[/]");
 
                 var sb = new StringBuilder();
                 for (int i = 0; i < numbers.Count; i += 3)
@@ -290,7 +348,7 @@ class Program
 
             await Task.Delay(1000);
             ctx.SpinnerStyle(Style.Parse("White"));
-            ctx.Status("[White]Spliting up the message...[/]");
+            ctx.Status("[White]Splitting up the message...[/]");
             int residual = cleanedMessage.Length % 3;
             if (residual != 0)
             {
@@ -300,7 +358,7 @@ class Program
             await Task.Delay(1500);
             ctx.SpinnerStyle(Style.Parse("Aquamarine1"));
             ctx.Spinner(Spinner.Known.Point);
-            ctx.Status("[Aquamarine1]Starting encription...[/]");
+            ctx.Status("[Aquamarine1]Starting encryption...[/]");
             List<int> criptograma = new List<int>();
             for (int i = 0; i < cleanedMessage.Length; i += 3)
             {
